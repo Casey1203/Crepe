@@ -5,8 +5,8 @@ By Xiang Zhang @ New York University
 
 -- Necessary functionalities
 require("nn")
-require("cutorch")
-require("cunn")
+--require("cutorch")
+--require("cunn")
 require("gnuplot")
 
 -- Local requires

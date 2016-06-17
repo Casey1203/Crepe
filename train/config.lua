@@ -26,34 +26,42 @@ config.val_data.batch_size = 128
 
 -- The model
 config.model = {}
--- #alphabet x 1014
+-- #alphabet x 1014 = 70 x 1014
+-- layer 1
 config.model[1] = {module = "nn.TemporalConvolution", inputFrameSize = #alphabet, outputFrameSize = 256, kW = 7}
-config.model[2] = {module = "nn.Threshold"}
+config.model[2] = {module = "nn.Threshold"} --ReLU
 config.model[3] = {module = "nn.TemporalMaxPooling", kW = 3, dW = 3}
--- 336 x 256
+-- 336 x 256 (336 = (1014-7)/3)
+-- layer 2
 config.model[4] = {module = "nn.TemporalConvolution", inputFrameSize = 256, outputFrameSize = 256, kW = 7}
-config.model[5] = {module = "nn.Threshold"}
+config.model[5] = {module = "nn.Threshold"} -- ReLU
 config.model[6] = {module = "nn.TemporalMaxPooling", kW = 3, dW = 3}
--- 110 x 256
+-- 110 x 256 (110 = (336-6)/3)
+-- layer 3
 config.model[7] = {module = "nn.TemporalConvolution", inputFrameSize = 256, outputFrameSize = 256, kW = 3}
 config.model[8] = {module = "nn.Threshold"}
 -- 108 x 256
+-- layer 4
 config.model[9] = {module = "nn.TemporalConvolution", inputFrameSize = 256, outputFrameSize = 256, kW = 3}
 config.model[10] = {module = "nn.Threshold"}
 -- 106 x 256
+-- layer 5
 config.model[11] = {module = "nn.TemporalConvolution", inputFrameSize = 256, outputFrameSize = 256, kW = 3}
 config.model[12] = {module = "nn.Threshold"}
 -- 104 x 256
+-- layer 6
 config.model[13] = {module = "nn.TemporalConvolution", inputFrameSize = 256, outputFrameSize = 256, kW = 3}
 config.model[14] = {module = "nn.Threshold"}
 config.model[15] = {module = "nn.TemporalMaxPooling", kW = 3, dW = 3}
--- 34 x 256
+-- 34 x 256 (34 = (104-2)/3)
 config.model[16] = {module = "nn.Reshape", size = 8704}
--- 8704
+-- 8704 = 34 * 256
+-- layer 7
 config.model[17] = {module = "nn.Linear", inputSize = 8704, outputSize = 1024}
 config.model[18] = {module = "nn.Threshold"}
 config.model[19] = {module = "nn.Dropout", p = 0.5}
 -- 1024
+-- layer 8
 config.model[20] = {module = "nn.Linear", inputSize = 1024, outputSize = 1024}
 config.model[21] = {module = "nn.Threshold"}
 config.model[22] = {module = "nn.Dropout", p = 0.5}
@@ -83,14 +91,14 @@ config.mui.n = 16
 
 -- Main program
 config.main = {}
-config.main.type = "torch.CudaTensor"
+config.main.type = "torch.FloatTensor"
 config.main.eras = 10
 config.main.epoches = 5000
 config.main.randomize = 5e-2
 config.main.dropout = true
 config.main.save = paths.concat(paths.cwd())
 config.main.details = true
-config.main.device = 1
+config.main.device = false
 config.main.collectgarbage = 100
 config.main.logtime = 5
 config.main.debug = false
